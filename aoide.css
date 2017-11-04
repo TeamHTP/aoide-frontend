@@ -1,6 +1,6 @@
 @keyframes info-slide {
   from {
-    right: -358px;
+    right: -408px;
   }
   to {
     right: 0;
@@ -22,9 +22,9 @@ body {
 #info {
   position: absolute;
   top: 0;
-  right: -358px;
+  right: -408px;
   bottom: 41px;
-  width: 350px;
+  width: 400px;
   border-left: 8px solid #f0f0f0;
   background: #fff;
   overflow-y: scroll;

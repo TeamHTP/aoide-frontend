@@ -139,6 +139,8 @@ var noteValues = {
 };
 
 var audioData;
+var playingFrames = [];
+var playing = false;
 var audioContext = new AudioContext();
 
 var editorDiv = document.getElementById('source');
@@ -183,7 +185,13 @@ editorDiv.ondrop = function(e) {
 
 // Controls
 play.onclick = function(e) {
-  sendString(editor.getValue());
+  if (!playing) {
+    sendString(editor.getValue());
+  }
+  else {
+    playing = false;
+    updatePlayButtonIcon();
+  }
 };
 
 // Util functions
@@ -192,6 +200,19 @@ function loadFile(f) {
   fileReader.readAsText(f);
   fileReader.onload = function(e) {
     editor.setValue(e.target.result);
+  }
+}
+function updatePlayButtonIcon() {
+  if (play.classList.contains('fa-cog')) {
+    return;
+  }
+  if (playing) {
+    play.classList.remove('fa-play');
+    play.classList.add('fa-stop');
+  }
+  else {
+    play.classList.add('fa-play');
+    play.classList.remove('fa-stop');
   }
 }
 function sendString(s) {
@@ -232,35 +253,30 @@ function setProgress(val) {
 }
 function addLicense(projectTitle, license) {
   infoInnerDiv.innerHTML += `<h2>${projectTitle}</h2>`;
-  infoInnerDiv.innerHTML += `<p>${license}</p>`;
+  infoInnerDiv.innerHTML += `<p style="font-size: 11px;">${license}</p>`;
+}
+function httpGet(url, callback) {
+  var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == XMLHttpRequest.DONE) {
+      callback(xhr.responseText);
+    }
+  }
+  xhr.open('GET', url);
+  xhr.send();
 }
 
 // Add licenses
-addLicense('ace', `Copyright (c) 2010, Ajax.org B.V.
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-    * Neither the name of Ajax.org B.V. nor the
-      names of its contributors may be used to endorse or promote products
-      derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL AJAX.ORG B.V. BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.`);
-addLicense('Font Awesome', '<a href="http://fontawesome.io/license/">http://fontawesome.io/license/</a>')
+addLicense('Font Awesome', '<a href="http://fontawesome.io/license/">http://fontawesome.io/license/</a>');
+httpGet('https://raw.githubusercontent.com/ajaxorg/ace/master/LICENSE', function(str) {
+  addLicense('Ace', str);
+});
+httpGet('https://raw.githubusercontent.com/antlr/antlr4/master/LICENSE.txt', function(str) {
+  addLicense('ANTLR4', str);
+});
+httpGet('https://raw.githubusercontent.com/perwendel/spark/master/LICENSE', function(str) {
+  addLicense('Spark', str);
+});
 
 // Play a sound
 // waves: sine, square, triangle, sawtooth
@@ -279,16 +295,20 @@ function playSound(note, wave, duration) {
   }, (duration + 1) * 1000);
 }
 function playFrame(track, frame) {
-  if (frame < audioData[track].nodes.length) {
+  if (frame < audioData[track].nodes.length && playing) {
     var frameData = audioData[track].nodes[frame];
     playSound(frameData.key, frameData.wave, frameData.duration / 6);
+    playingFrames[track] = frame;
     setTimeout(function() {
-      playFrame(track, frame + 1)
+      playFrame(track, frame + 1);
     }, frameData.duration / 6 * 1000);
   }
 }
 function playAudioData() {
+  playing = true;
+  updatePlayButtonIcon();
   for (var i = 0; i < audioData.length; i++) {
+    playingFrames[i] = 0;
     playFrame(i, 0);
   }
 }
