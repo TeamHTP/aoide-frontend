@@ -23,6 +23,16 @@ body {
   text-align: center;
 }
 
+#progress {
+  position: absolute;
+  z-index: 500;
+  bottom: 0;
+  left: 0;
+  width: 0vw;
+  height: 41px;
+  background: #03A9F4;
+}
+
 #aoide {
   position: absolute;
   bottom: 44px;
@@ -33,5 +43,7 @@ body {
 }
 
 .control {
+  position: relative;
+  z-index: 1000;
   cursor: pointer;
 }
