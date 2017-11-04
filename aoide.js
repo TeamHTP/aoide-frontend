@@ -57,6 +57,6 @@ function sendString(s) {
   xhr.open('POST', 'https://aoide-dev.herokuapp.com/process');
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.send(JSON.stringify({
-    file: s
+    data: s
   }));
 }
