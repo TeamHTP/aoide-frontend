@@ -1,0 +1,37 @@
+body {
+  font-family: sans-serif;
+}
+
+#source {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 41px;
+  left: 0;
+}
+
+#controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 21px;
+  background: #dcdcdc;
+  padding: 10px;
+  font-size: 21px;
+  color: #333;
+  text-align: center;
+}
+
+#aoide {
+  position: absolute;
+  bottom: 44px;
+  right: 6px;
+  font-family: sans-serif;
+  color: rgba(100, 100, 100, 0.2);
+  user-select: none;
+}
+
+.control {
+  cursor: pointer;
+}
