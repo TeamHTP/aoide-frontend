@@ -142,6 +142,9 @@ var audioData;
 var audioContext = new AudioContext();
 
 var editorDiv = document.getElementById('source');
+var progressDiv = document.getElementById('progress');
+var infoDiv = document.getElementById('info');
+var infoInnerDiv = document.getElementById('info-inner');
 var play = document.getElementById('play');
 
 var editor = ace.edit('source');
@@ -150,7 +153,10 @@ var editor = ace.edit('source');
 editor.getSession().setMode('ace/mode/java');
 editor.setFontSize(16);
 editor.setValue(
-`public class HelloWorld {
+`/*
+ * Click play to hear what this code sounds like or write your own class!
+ */
+public class Main {
     public static void main(String[] args) {
         System.out.println("Hello, World!");
     }
@@ -200,6 +206,7 @@ function sendString(s) {
       play.classList.remove('fa-spin');
       audioData = JSON.parse(xhr.responseText);
       console.log(audioData);
+      playAudioData();
     }
   }
   xhr.open('POST', 'https://aoide-dev.herokuapp.com/process');
@@ -208,14 +215,60 @@ function sendString(s) {
     data: s
   }));
 }
+function openInfo() {
+  infoDiv.classList.remove('info-slide-out');
+  setTimeout(function() {
+    infoDiv.classList.add('info-slide-in');
+  }, 10);
+}
+function closeInfo() {
+  infoDiv.classList.remove('info-slide-in');
+  setTimeout(function() {
+    infoDiv.classList.add('info-slide-out');
+  }, 10);
+}
+function setProgress(val) {
+  progressDiv.style.width = `${val}vw`;
+}
+function addLicense(projectTitle, license) {
+  infoInnerDiv.innerHTML += `<h2>${projectTitle}</h2>`;
+  infoInnerDiv.innerHTML += `<p>${license}</p>`;
+}
+
+// Add licenses
+addLicense('ace', `Copyright (c) 2010, Ajax.org B.V.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of Ajax.org B.V. nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL AJAX.ORG B.V. BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.`);
+addLicense('Font Awesome', '<a href="http://fontawesome.io/license/">http://fontawesome.io/license/</a>')
 
 // Play a sound
-// Types: sine, square, triangle, sawtooth
+// waves: sine, square, triangle, sawtooth
 // Duration in seconds
-function playSound(note, type, duration) {
+function playSound(note, wave, duration) {
   var o = audioContext.createOscillator();
   var g = audioContext.createGain();
-  o.type = type;
+  o.type = wave;
   o.frequency.value = noteValues[note];
   o.connect(g);
   g.connect(audioContext.destination);
@@ -224,4 +277,18 @@ function playSound(note, type, duration) {
   window.setTimeout(function () {
     o.stop();
   }, (duration + 1) * 1000);
+}
+function playFrame(track, frame) {
+  if (frame < audioData[track].nodes.length) {
+    var frameData = audioData[track].nodes[frame];
+    playSound(frameData.key, frameData.wave, frameData.duration / 6);
+    setTimeout(function() {
+      playFrame(track, frame + 1)
+    }, frameData.duration / 6 * 1000);
+  }
+}
+function playAudioData() {
+  for (var i = 0; i < audioData.length; i++) {
+    playFrame(i, 0);
+  }
 }

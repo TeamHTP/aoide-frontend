@@ -1,3 +1,12 @@
+@keyframes info-slide {
+  from {
+    right: -358px;
+  }
+  to {
+    right: 0;
+  }
+}
+
 body {
   font-family: sans-serif;
 }
@@ -8,6 +17,30 @@ body {
   right: 0;
   bottom: 41px;
   left: 0;
+}
+
+#info {
+  position: absolute;
+  top: 0;
+  right: -358px;
+  bottom: 41px;
+  width: 350px;
+  border-left: 8px solid #f0f0f0;
+  background: #fff;
+  overflow-y: scroll;
+  z-index: 1000;
+}
+
+#info-inner {
+  padding: 32px;
+}
+
+.info-slide-in {
+  animation: info-slide 0.4s cubic-bezier(0.86, 0, 0.07, 1) forwards;
+}
+
+.info-slide-out {
+  animation: info-slide 0.4s cubic-bezier(0.86, 0, 0.07, 1) reverse forwards;
 }
 
 #controls {
