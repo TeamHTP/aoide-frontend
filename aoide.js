@@ -290,7 +290,6 @@ function highlightRangeFrom2d(start, end) {
     charsSeen++;
   }
   var range = new Range(startLine, startCol, endLine, endCol);
-  console.log(range);
   var marker = editor.getSession().addMarker(range, 'highlight', 'background');
   return marker;
 }
