@@ -339,7 +339,7 @@ function playFrame(track) {
     }
     for (var i = 0; i < audioData[track].nodes.length; i++) {
       var frameData = audioData[track].nodes[i];
-      playSound(frameData.key, frameData.wave, frameData.duration / 6);
+      playSound(frameData.key, frameData.wave, frameData.duration);
       playingFrames[track] = i;
       if (frameData.duration > longestDuration) {
         longestDuration = frameData.duration;
