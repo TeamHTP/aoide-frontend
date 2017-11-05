@@ -148,6 +148,8 @@ var progressDiv = document.getElementById('progress');
 var infoDiv = document.getElementById('info');
 var infoInnerDiv = document.getElementById('info-inner');
 var play = document.getElementById('play');
+var lang = document.getElementById('lang');
+var speed = document.getElementById('speed');
 
 var Range = require('ace/range').Range;
 var editor = ace.edit('source');
@@ -195,6 +197,14 @@ play.onclick = function(e) {
     updatePlayButtonIcon();
   }
 };
+lang.onchange = function(e) {
+  if (lang.value == 'Java8') {
+    editor.getSession().setMode('ace/mode/java');
+  }
+  else if (lang.value == 'JavaScript') {
+    editor.getSession().setMode('ace/mode/javascript');
+  }
+};
 
 // Util functions
 function loadFile(f) {
@@ -229,6 +239,9 @@ function sendString(s) {
       play.classList.remove('fa-spin');
       audioData = JSON.parse(xhr.responseText);
       console.log(audioData);
+      if (typeof audioData.error !== 'undefined') {
+        alert(audioData.error);
+      }
       playAudioData();
     }
   }
@@ -236,7 +249,7 @@ function sendString(s) {
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.send(JSON.stringify({
     data: s,
-    lang: document.getElementById('lang').value
+    lang: lang.value
   }));
 }
 function openInfo() {
@@ -302,6 +315,9 @@ httpGet('https://raw.githubusercontent.com/ajaxorg/ace/master/LICENSE', function
 httpGet('https://raw.githubusercontent.com/antlr/antlr4/master/LICENSE.txt', function(str) {
   addLicense('ANTLR4', str);
 });
+httpGet('https://raw.githubusercontent.com/NeilFraser/JS-Interpreter/master/LICENSE', function(str) {
+  addLicense('JS-Interpreter', str);
+});
 httpGet('https://raw.githubusercontent.com/google/gson/master/LICENSE', function(str) {
   addLicense('gson', str);
 });
@@ -339,7 +355,7 @@ function playFrame(track) {
     }
     for (var i = 0; i < audioData[track].nodes.length; i++) {
       var frameData = audioData[track].nodes[i];
-      playSound(frameData.key, frameData.wave, frameData.duration);
+      playSound(frameData.key, frameData.wave, frameData.duration / speed.value);
       playingFrames[track] = i;
       if (frameData.duration > longestDuration) {
         longestDuration = frameData.duration;
@@ -347,7 +363,7 @@ function playFrame(track) {
     }
     setTimeout(function() {
       playFrame(track + 1);
-    }, longestDuration / 12 * 1000);
+    }, longestDuration / speed.value / 12 * 1000);
   }
   else {
     if (typeof lastMarker !== 'undefined') {

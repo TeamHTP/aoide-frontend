@@ -15,7 +15,75 @@
     <div id="info-inner">
       <a href="javascript:closeInfo()" id="close-info">Close</a>
       <h1>How does Aoide work?</h1>
-      <p>Lorem ipsum dolor sit amet, eum ex inermis omittam mediocrem, quo reque ridens legendos et. Ne agam solum vocibus vix. Vix natum tacimates imperdiet an, an idque nostro deleniti sit. Minimum voluptaria conclusionemque est ut. Qui modus fabulas maiestatis id.</p>
+      <p>Aoide converts code to music by following basic principles of chord progression.</p>
+      <h3>Java Source Analysis</h3>
+      <p>We use an abstract syntax tree generated from the source code to produce chords and variations.</p>
+      <h3>JavaScript Code Execution</h3>
+      <p>The code is executed and the stack at each execution step is used to generate chords.</p>
+      <h1>Samples</h1>
+      <h3>Bubble sort (JS)</h3>
+      <textarea style="width: 100%; height: 300px;">
+var array = [9, 2, 5, 6, 4, 3, 7, 10, 1, 8];
+function swap(array, i, j) {
+    var temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+}
+function bubbleSort(array) {
+    var swapped;
+    do {
+        swapped = false;
+        for(var i = 0; i < array.length; i++) {
+            if(array[i] &amp;&amp; array[i + 1] &amp;&amp; array[i] > array[i + 1]) {
+                swap(array, i, i + 1);
+                swapped = true;
+            }
+        }
+    } while(swapped);
+    return array;
+}
+
+bubbleSort(array.slice());
+      </textarea>
+      <h3>Merge sort (JS)</h3>
+      <textarea style="width: 100%; height: 300px;">
+var a = [34, 203, 3, 746, 200, 984, 198, 764, 9];
+
+function mergeSort(arr)
+{
+    if (arr.length < 2)
+        return arr;
+
+    var middle = parseInt(arr.length / 2);
+    var left   = arr.slice(0, middle);
+    var right  = arr.slice(middle, arr.length);
+
+    return merge(mergeSort(left), mergeSort(right));
+}
+
+function merge(left, right)
+{
+    var result = [];
+
+    while (left.length &amp;&amp; right.length) {
+        if (left[0] <= right[0]) {
+            result.push(left.shift());
+        } else {
+            result.push(right.shift());
+        }
+    }
+
+    while (left.length)
+        result.push(left.shift());
+
+    while (right.length)
+        result.push(right.shift());
+
+    return result;
+}
+
+mergeSort(a);
+      </textarea>
       <h1>Licenses</h1>
     </div>
   </div>
@@ -23,10 +91,12 @@
     <div id="progress"></div>
     <i id="play" class="fa fa-play control" aria-hidden="true"></i>
     <span style="float: right; font-size: 12px;">
+      Speed: 
+      <input type="number" id="speed" min="0.5" max="3" step="0.25" value="1">
       Language: 
       <select id="lang">
-        <option value="Java8">Java8</option>
-        <option value="JavaScript">JavaScript</option>
+        <option value="Java8">Java8 (Source analysis)</option>
+        <option value="JavaScript">JavaScript (Code execution)</option>
       </select>
     </span>
   </div>
