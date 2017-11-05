@@ -234,7 +234,7 @@ function sendString(s) {
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.send(JSON.stringify({
     data: s,
-    lang: document.getElementById('source').value
+    lang: document.getElementById('lang').value
   }));
 }
 function openInfo() {
