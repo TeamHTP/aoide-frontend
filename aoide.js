@@ -233,7 +233,8 @@ function sendString(s) {
   xhr.open('POST', 'https://aoide-dev.herokuapp.com/process');
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.send(JSON.stringify({
-    data: s
+    data: s,
+    lang: document.getElementById('source').value
   }));
 }
 function openInfo() {
