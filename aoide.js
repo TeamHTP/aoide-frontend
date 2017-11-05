@@ -149,7 +149,9 @@ var infoDiv = document.getElementById('info');
 var infoInnerDiv = document.getElementById('info-inner');
 var play = document.getElementById('play');
 
+var Range = require('ace/range').Range;
 var editor = ace.edit('source');
+var lastMarker;
 
 // Initialize ace
 editor.getSession().setMode('ace/mode/java');
@@ -266,6 +268,32 @@ function httpGet(url, callback) {
   xhr.open('GET', url);
   xhr.send();
 }
+function highlightRangeFrom2d(start, end) {
+  var lines = editor.getValue().split('\n');
+  var charsSeen = 0;
+  var startLine = 0;
+  var startCol = 0;
+  var endLine = 0;
+  var endCol = 0;
+  for (var line = 0; line < lines.length; line++) {
+    for (var col = 0; col < lines[line].length; col++) {
+      if (charsSeen == start) {
+        startLine = line;
+        startCol = col;
+      }
+      if (charsSeen == end) {
+        endLine = line;
+        endCol = col;
+      }
+      charsSeen++;
+    }
+    charsSeen++;
+  }
+  var range = new Range(startLine, startCol, endLine, endCol);
+  console.log(range);
+  var marker = editor.getSession().addMarker(range, 'highlight', 'background');
+  return marker;
+}
 
 // Add licenses
 addLicense('Font Awesome', '<a href="http://fontawesome.io/license/">http://fontawesome.io/license/</a>');
@@ -304,6 +332,12 @@ function playSound(note, wave, duration) {
 function playFrame(track) {
   if (track < audioData.length && playing) {
     var longestDuration = 0;
+    if (typeof lastMarker !== 'undefined') {
+      editor.getSession().removeMarker(lastMarker);
+    }
+    if (audioData[track].codeStart != 0 || audioData[track].codeEnd != 0) {
+      lastMarker = highlightRangeFrom2d(audioData[track].codeStart, audioData[track].codeEnd);
+    }
     for (var i = 0; i < audioData[track].nodes.length; i++) {
       var frameData = audioData[track].nodes[i];
       playSound(frameData.key, frameData.wave, frameData.duration / 6);
@@ -317,6 +351,9 @@ function playFrame(track) {
     }, longestDuration / 12 * 1000);
   }
   else {
+    if (typeof lastMarker !== 'undefined') {
+      editor.getSession().removeMarker(lastMarker);
+    }
     playing = false;
     updatePlayButtonIcon();
   }

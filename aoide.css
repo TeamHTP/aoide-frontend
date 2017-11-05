@@ -20,6 +20,11 @@ body {
   left: 0;
 }
 
+.highlight {
+  background: rgba(52, 152, 219, 0.25);
+  position: absolute;
+}
+
 #info {
   position: absolute;
   top: 0;
