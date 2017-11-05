@@ -252,7 +252,7 @@ function setProgress(val) {
   progressDiv.style.width = `${val}vw`;
 }
 function addLicense(projectTitle, license) {
-  infoInnerDiv.innerHTML += `<h2>${projectTitle}</h2>`;
+  infoInnerDiv.innerHTML += `<h3>${projectTitle}</h3>`;
   infoInnerDiv.innerHTML += `<p style="font-size: 11px;">${license}</p>`;
 }
 function httpGet(url, callback) {
@@ -273,6 +273,12 @@ httpGet('https://raw.githubusercontent.com/ajaxorg/ace/master/LICENSE', function
 });
 httpGet('https://raw.githubusercontent.com/antlr/antlr4/master/LICENSE.txt', function(str) {
   addLicense('ANTLR4', str);
+});
+httpGet('https://raw.githubusercontent.com/google/gson/master/LICENSE', function(str) {
+  addLicense('gson', str);
+});
+httpGet('https://raw.githubusercontent.com/qos-ch/slf4j/master/LICENSE.txt', function(str) {
+  addLicense('SLF4J', str);
 });
 httpGet('https://raw.githubusercontent.com/perwendel/spark/master/LICENSE', function(str) {
   addLicense('Spark', str);
