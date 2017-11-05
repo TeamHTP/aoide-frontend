@@ -300,21 +300,28 @@ function playSound(note, wave, duration) {
     o.stop();
   }, (duration + 1) * 1000);
 }
-function playFrame(track, frame) {
-  if (frame < audioData[track].nodes.length && playing) {
-    var frameData = audioData[track].nodes[frame];
-    playSound(frameData.key, frameData.wave, frameData.duration / 6);
-    playingFrames[track] = frame;
+function playFrame(track) {
+  if (track < audioData.length && playing) {
+    var longestDuration = 0;
+    for (var i = 0; i < audioData[track].nodes.length; i++) {
+      var frameData = audioData[track].nodes[i];
+      playSound(frameData.key, frameData.wave, frameData.duration / 6);
+      playingFrames[track] = i;
+      if (frameData.duration > longestDuration) {
+        longestDuration = frameData.duration;
+      }
+    }
     setTimeout(function() {
-      playFrame(track, frame + 1);
-    }, frameData.duration / 6 * 1000);
+      playFrame(track + 1);
+    }, longestDuration / 12 * 1000);
+  }
+  else {
+    playing = false;
+    updatePlayButtonIcon();
   }
 }
 function playAudioData() {
   playing = true;
   updatePlayButtonIcon();
-  for (var i = 0; i < audioData.length; i++) {
-    playingFrames[i] = 0;
-    playFrame(i, 0);
-  }
+  playFrame(0);
 }
