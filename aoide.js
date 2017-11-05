@@ -156,17 +156,47 @@ var editor = ace.edit('source');
 var lastMarker;
 
 // Initialize ace
-editor.getSession().setMode('ace/mode/java');
+editor.getSession().setMode('ace/mode/javascript');
 editor.setFontSize(16);
 editor.setValue(
 `/*
- * Click play to hear what this code sounds like or write your own class!
+ * Click play to hear what this code sounds like or write your own!
+ * Note: our interpreter is pretty bare-bones and doesn't include implementations for things like console.log()
  */
-public class Main {
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
-    }
+var a = [34, 203, 3, 746, 200, 984, 198, 764, 9];
+
+function mergeSort(arr) {
+    if (arr.length < 2)
+        return arr;
+
+    var middle = parseInt(arr.length / 2);
+    var left   = arr.slice(0, middle);
+    var right  = arr.slice(middle, arr.length);
+
+    return merge(mergeSort(left), mergeSort(right));
 }
+
+function merge(left, right) {
+    var result = [];
+
+    while (left.length && right.length) {
+        if (left[0] <= right[0]) {
+            result.push(left.shift());
+        } else {
+            result.push(right.shift());
+        }
+    }
+
+    while (left.length)
+        result.push(left.shift());
+
+    while (right.length)
+        result.push(right.shift());
+
+    return result;
+}
+
+mergeSort(a);
 `);
 editor.gotoLine(1);
 
@@ -338,8 +368,8 @@ function playSound(note, wave, duration) {
   o.frequency.value = noteValues[note];
   o.connect(g);
   g.connect(audioContext.destination);
-  o.start(0);
   g.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + duration);
+  o.start(0);
   window.setTimeout(function () {
     o.stop();
   }, (duration + 1) * 1000);

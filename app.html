@@ -15,12 +15,19 @@
     <div id="info-inner">
       <a href="javascript:closeInfo()" id="close-info">Close</a>
       <h1>How does Aoide work?</h1>
-      <p>Aoide converts code to music by following basic principles of chord progression.</p>
+      <p>Aoide converts your code to music by following basic principles of chord progression.</p>
+      <h3>JavaScript Code Execution</h3>
+      <p>Chords and progressions are generated from the interpreter stack after each execution step.</p>
       <h3>Java Source Analysis</h3>
       <p>We use an abstract syntax tree generated from the source code to produce chords and variations.</p>
-      <h3>JavaScript Code Execution</h3>
-      <p>The code is executed and the stack at each execution step is used to generate chords.</p>
       <h1>Samples</h1>
+      <h3>Hello World (Java)</h3>
+      <textarea style="width: 100%; height: 150px;">
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}</textarea>
       <h3>Bubble sort (JS)</h3>
       <textarea style="width: 100%; height: 300px;">
 var array = [9, 2, 5, 6, 4, 3, 7, 10, 1, 8];
@@ -43,14 +50,12 @@ function bubbleSort(array) {
     return array;
 }
 
-bubbleSort(array.slice());
-      </textarea>
+bubbleSort(array.slice());</textarea>
       <h3>Merge sort (JS)</h3>
       <textarea style="width: 100%; height: 300px;">
 var a = [34, 203, 3, 746, 200, 984, 198, 764, 9];
 
-function mergeSort(arr)
-{
+function mergeSort(arr) {
     if (arr.length < 2)
         return arr;
 
@@ -61,8 +66,7 @@ function mergeSort(arr)
     return merge(mergeSort(left), mergeSort(right));
 }
 
-function merge(left, right)
-{
+function merge(left, right) {
     var result = [];
 
     while (left.length &amp;&amp; right.length) {
@@ -82,8 +86,7 @@ function merge(left, right)
     return result;
 }
 
-mergeSort(a);
-      </textarea>
+mergeSort(a);</textarea>
       <h1>Licenses</h1>
     </div>
   </div>
@@ -95,8 +98,8 @@ mergeSort(a);
       <input type="number" id="speed" min="0.5" max="3" step="0.25" value="1">
       Language: 
       <select id="lang">
-        <option value="Java8">Java8 (Source analysis)</option>
         <option value="JavaScript">JavaScript (Code execution)</option>
+        <option value="Java8">Java8 (Source analysis)</option>
       </select>
     </span>
   </div>
