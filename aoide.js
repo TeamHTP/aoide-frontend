@@ -366,13 +366,15 @@ function playSound(note, wave, duration) {
   var g = audioContext.createGain();
   o.type = wave;
   o.frequency.value = noteValues[note];
+  o.start(0);
   o.connect(g);
   g.connect(audioContext.destination);
+  g.gain.setValueAtTime(1, 0);
   g.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + duration);
-  o.start(0);
   window.setTimeout(function () {
     o.stop();
-  }, (duration + 1) * 1000);
+    delete o;
+  }, (duration * 1000) + 100);
 }
 function playFrame(track) {
   if (track < audioData.length && playing) {
@@ -393,7 +395,7 @@ function playFrame(track) {
     }
     setTimeout(function() {
       playFrame(track + 1);
-    }, longestDuration / speed.value / 12 * 1000);
+    }, (longestDuration / speed.value / 12) * 1000);
   }
   else {
     if (typeof lastMarker !== 'undefined') {
