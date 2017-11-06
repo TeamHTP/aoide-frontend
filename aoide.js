@@ -361,6 +361,9 @@ httpGet('https://raw.githubusercontent.com/perwendel/spark/master/LICENSE', func
 // Play a sound
 // waves: sine, square, triangle, sawtooth
 // Duration in seconds
+var globalGain = audioContext.createGain();
+globalGain.connect(audioContext.destination);
+globalGain.gain.setValueAtTime(0.07, audioContext.currentTime);
 function playSound(note, wave, duration) {
   var o = audioContext.createOscillator();
   var g = audioContext.createGain();
@@ -368,13 +371,14 @@ function playSound(note, wave, duration) {
   o.frequency.value = noteValues[note];
   o.start(0);
   o.connect(g);
-  g.connect(audioContext.destination);
-  g.gain.setValueAtTime(1, 0);
+  g.connect(globalGain);
+  var initialGain = 1;
+  if (wave == 'sawtooth' || wave == 'square') {
+    initialGain = 0.75;
+  }
+  g.gain.setValueAtTime(initialGain, audioContext.currentTime);
   g.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + duration);
-  window.setTimeout(function () {
-    o.stop();
-    delete o;
-  }, (duration * 1000) + 100);
+  o.stop(audioContext.currentTime + duration);
 }
 function playFrame(track) {
   if (track < audioData.length && playing) {
